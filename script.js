@@ -1,6 +1,12 @@
 const video = document.getElementById("video")
 
-// THREE JS
+const drawCanvas = document.getElementById("drawCanvas")
+const drawCtx = drawCanvas.getContext("2d")
+
+drawCanvas.width = window.innerWidth
+drawCanvas.height = window.innerHeight
+
+// THREE
 const scene = new THREE.Scene()
 
 const camera = new THREE.PerspectiveCamera(
@@ -19,7 +25,6 @@ renderer.setSize(window.innerWidth,window.innerHeight)
 
 camera.position.z=5
 
-// Globo 3D
 const geometry = new THREE.SphereGeometry(1,32,32)
 
 const material = new THREE.MeshStandardMaterial({
@@ -30,10 +35,13 @@ const sphere = new THREE.Mesh(geometry,material)
 
 scene.add(sphere)
 
-// luz
 const light = new THREE.PointLight(0xffffff,1)
 light.position.set(10,10,10)
 scene.add(light)
+
+// desenho
+let lastX=null
+let lastY=null
 
 // mediapipe
 const hands = new Hands({
@@ -51,20 +59,46 @@ hands.onResults(results=>{
 
 if(results.multiHandLandmarks){
 
-const finger = results.multiHandLandmarks[0][8]
+const lm = results.multiHandLandmarks[0]
 
-// posição do dedo
-const x = (finger.x - 0.5) * 10
-const y = -(finger.y - 0.5) * 6
+const finger = lm[8]
 
-sphere.position.x = x
-sphere.position.y = y
+const x = finger.x * window.innerWidth
+const y = finger.y * window.innerHeight
+
+// mover globo
+sphere.position.x = (finger.x - 0.5) * 10
+sphere.position.y = -(finger.y - 0.5) * 6
+
+// desenhar
+if(lastX && lastY){
+
+drawCtx.beginPath()
+drawCtx.moveTo(lastX,lastY)
+drawCtx.lineTo(x,y)
+
+drawCtx.strokeStyle="cyan"
+drawCtx.lineWidth=5
+drawCtx.shadowBlur=20
+drawCtx.shadowColor="cyan"
+
+drawCtx.stroke()
+
+}
+
+lastX = x
+lastY = y
+
+}else{
+
+lastX=null
+lastY=null
 
 }
 
 })
 
-// iniciar webcam
+// webcam
 navigator.mediaDevices.getUserMedia({video:true})
 .then(stream=>{
 
