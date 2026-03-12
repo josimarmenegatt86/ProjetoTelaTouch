@@ -19,7 +19,7 @@ renderer.setSize(window.innerWidth,window.innerHeight)
 
 camera.position.z=5
 
-// objeto 3D
+// Globo 3D
 const geometry = new THREE.SphereGeometry(1,32,32)
 
 const material = new THREE.MeshStandardMaterial({
@@ -30,10 +30,9 @@ const sphere = new THREE.Mesh(geometry,material)
 
 scene.add(sphere)
 
+// luz
 const light = new THREE.PointLight(0xffffff,1)
-
 light.position.set(10,10,10)
-
 scene.add(light)
 
 // mediapipe
@@ -54,6 +53,7 @@ if(results.multiHandLandmarks){
 
 const finger = results.multiHandLandmarks[0][8]
 
+// posição do dedo
 const x = (finger.x - 0.5) * 10
 const y = -(finger.y - 0.5) * 6
 
@@ -64,6 +64,7 @@ sphere.position.y = y
 
 })
 
+// iniciar webcam
 navigator.mediaDevices.getUserMedia({video:true})
 .then(stream=>{
 
