@@ -1,9 +1,42 @@
 const video = document.getElementById("video")
-const canvas = document.getElementById("canvas")
-const ctx = canvas.getContext("2d")
 
-let trail=[]
+// THREE JS
+const scene = new THREE.Scene()
 
+const camera = new THREE.PerspectiveCamera(
+75,
+window.innerWidth/window.innerHeight,
+0.1,
+1000
+)
+
+const renderer = new THREE.WebGLRenderer({
+canvas:document.getElementById("threeCanvas"),
+alpha:true
+})
+
+renderer.setSize(window.innerWidth,window.innerHeight)
+
+camera.position.z=5
+
+// objeto 3D
+const geometry = new THREE.SphereGeometry(1,32,32)
+
+const material = new THREE.MeshStandardMaterial({
+color:0x00ffff
+})
+
+const sphere = new THREE.Mesh(geometry,material)
+
+scene.add(sphere)
+
+const light = new THREE.PointLight(0xffffff,1)
+
+light.position.set(10,10,10)
+
+scene.add(light)
+
+// mediapipe
 const hands = new Hands({
 locateFile: file =>
 `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`
@@ -17,43 +50,15 @@ minTrackingConfidence:0.7
 
 hands.onResults(results=>{
 
-canvas.width = results.image.width
-canvas.height = results.image.height
-
-ctx.drawImage(results.image,0,0)
-
 if(results.multiHandLandmarks){
 
 const finger = results.multiHandLandmarks[0][8]
 
-const x = finger.x * canvas.width
-const y = finger.y * canvas.height
+const x = (finger.x - 0.5) * 10
+const y = -(finger.y - 0.5) * 6
 
-trail.push({x,y})
-
-if(trail.length>30){
-trail.shift()
-}
-
-ctx.lineJoin="round"
-ctx.lineCap="round"
-
-for(let i=1;i<trail.length;i++){
-
-ctx.beginPath()
-
-ctx.moveTo(trail[i-1].x,trail[i-1].y)
-ctx.lineTo(trail[i].x,trail[i].y)
-
-ctx.strokeStyle="cyan"
-ctx.lineWidth=8
-
-ctx.shadowBlur=20
-ctx.shadowColor="cyan"
-
-ctx.stroke()
-
-}
+sphere.position.x = x
+sphere.position.y = y
 
 }
 
@@ -64,7 +69,7 @@ navigator.mediaDevices.getUserMedia({video:true})
 
 video.srcObject=stream
 
-const camera=new Camera(video,{
+const cam = new Camera(video,{
 onFrame: async ()=>{
 await hands.send({image:video})
 },
@@ -72,6 +77,19 @@ width:640,
 height:480
 })
 
-camera.start()
+cam.start()
 
 })
+
+// animação
+function animate(){
+
+requestAnimationFrame(animate)
+
+sphere.rotation.y += 0.01
+
+renderer.render(scene,camera)
+
+}
+
+animate()
