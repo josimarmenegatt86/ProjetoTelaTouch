@@ -3,7 +3,7 @@
 
 <head>
 <meta charset="UTF-8">
-<title>Air Draw Hand Tracking</title>
+<title>Air Paint</title>
 
 <link rel="stylesheet" href="style.css">
 
@@ -15,7 +15,14 @@
 
 <body>
 
-<h1>Desenhar no Ar ✋</h1>
+<h1>Air Paint ✋🎨</h1>
+
+<div class="toolbar">
+
+<button onclick="clearCanvas()">🧹 Limpar</button>
+<button onclick="saveImage()">💾 Salvar</button>
+
+</div>
 
 <div class="container">
 <video id="video"></video>
@@ -23,8 +30,8 @@
 </div>
 
 <div class="info">
-<p>Use o dedo indicador para desenhar</p>
-<p>Feche a mão para parar</p>
+<p>☝️ indicador levantado = desenhar</p>
+<p>✌️ dois dedos = trocar cor</p>
 </div>
 
 <script src="script.js"></script>

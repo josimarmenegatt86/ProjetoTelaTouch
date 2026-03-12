@@ -1,67 +1,48 @@
-const video = document.getElementById("video")
-const canvas = document.getElementById("canvas")
-const ctx = canvas.getContext("2d")
-
-let lastX = null
-let lastY = null
-
-const hands = new Hands({
-locateFile: file =>
-`https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`
-})
-
-hands.setOptions({
-maxNumHands:1,
-modelComplexity:1,
-minDetectionConfidence:0.7,
-minTrackingConfidence:0.7
-})
-
-hands.onResults(results=>{
-
-canvas.width = results.image.width
-canvas.height = results.image.height
-
-ctx.drawImage(results.image,0,0,canvas.width,canvas.height)
-
-if(results.multiHandLandmarks){
-
-const landmarks = results.multiHandLandmarks[0]
-
-const index = landmarks[8]
-
-const x = index.x * canvas.width
-const y = index.y * canvas.height
-
-if(lastX && lastY){
-
-ctx.beginPath()
-ctx.moveTo(lastX,lastY)
-ctx.lineTo(x,y)
-ctx.strokeStyle="cyan"
-ctx.lineWidth=5
-ctx.stroke()
-
+body{
+background:#111;
+color:white;
+font-family:Arial;
+text-align:center;
 }
 
-lastX = x
-lastY = y
-
-}else{
-
-lastX=null
-lastY=null
-
+h1{
+margin-top:10px;
 }
 
-})
+.container{
+position:relative;
+display:inline-block;
+}
 
-const camera = new Camera(video,{
-onFrame: async ()=>{
-await hands.send({image:video})
-},
-width:640,
-height:480
-})
+canvas{
+border:3px solid cyan;
+border-radius:10px;
+max-width:900px;
+}
 
-camera.start()
+video{
+display:none;
+}
+
+.toolbar{
+margin:10px;
+}
+
+button{
+padding:10px 20px;
+margin:5px;
+font-size:16px;
+border:none;
+border-radius:6px;
+cursor:pointer;
+}
+
+button:hover{
+background:#444;
+color:white;
+}
+
+.info{
+margin-top:10px;
+color:#ccc;
+}

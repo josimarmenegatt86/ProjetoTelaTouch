@@ -1,27 +1,105 @@
-body{
-background:#111;
-color:white;
-font-family:Arial;
-text-align:center;
+const video = document.getElementById("video")
+const canvas = document.getElementById("canvas")
+const ctx = canvas.getContext("2d")
+
+let lastX = null
+let lastY = null
+
+let colors = ["cyan","red","yellow","lime","white"]
+let colorIndex = 0
+let currentColor = colors[colorIndex]
+
+const hands = new Hands({
+locateFile: file =>
+`https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`
+})
+
+hands.setOptions({
+maxNumHands:1,
+modelComplexity:1,
+minDetectionConfidence:0.7,
+minTrackingConfidence:0.7
+})
+
+hands.onResults(results=>{
+
+canvas.width = results.image.width
+canvas.height = results.image.height
+
+ctx.drawImage(results.image,0,0,canvas.width,canvas.height)
+
+if(results.multiHandLandmarks){
+
+const lm = results.multiHandLandmarks[0]
+
+const index = lm[8]
+const middle = lm[12]
+
+const x = index.x * canvas.width
+const y = index.y * canvas.height
+
+// verificar se dois dedos estão levantados
+if(index.y < lm[6].y && middle.y < lm[10].y){
+
+colorIndex++
+if(colorIndex >= colors.length) colorIndex=0
+currentColor = colors[colorIndex]
+
+lastX=null
+lastY=null
+
+return
 }
 
-.container{
-position:relative;
-display:inline-block;
+// desenhar se indicador levantado
+if(index.y < lm[6].y){
+
+if(lastX && lastY){
+
+ctx.beginPath()
+ctx.moveTo(lastX,lastY)
+ctx.lineTo(x,y)
+ctx.strokeStyle=currentColor
+ctx.lineWidth=5
+ctx.stroke()
+
 }
 
-canvas{
-max-width:900px;
-border:2px solid cyan;
-border-radius:10px;
+lastX=x
+lastY=y
+
+}else{
+
+lastX=null
+lastY=null
+
 }
 
-video{
-display:none;
 }
 
-.info{
-margin-top:10px;
-font-size:14px;
-color:#ccc;
+})
+
+const camera = new Camera(video,{
+onFrame: async ()=>{
+await hands.send({image:video})
+},
+width:640,
+height:480
+})
+
+camera.start()
+
+function clearCanvas(){
+
+ctx.clearRect(0,0,canvas.width,canvas.height)
+
+}
+
+function saveImage(){
+
+let link = document.createElement("a")
+link.download="air-paint.png"
+link.href=canvas.toDataURL()
+link.click()
+
 }
