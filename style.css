@@ -1,0 +1,27 @@
+body{
+background:#111;
+color:white;
+font-family:Arial;
+text-align:center;
+}
+
+.container{
+position:relative;
+display:inline-block;
+}
+
+canvas{
+max-width:900px;
+border:2px solid cyan;
+border-radius:10px;
+}
+
+video{
+display:none;
+}
+
+.info{
+margin-top:10px;
+font-size:14px;
+color:#ccc;
+}

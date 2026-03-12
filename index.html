@@ -1,35 +1,31 @@
 <!DOCTYPE html>
 <html>
+
 <head>
 <meta charset="UTF-8">
+<title>Air Draw Hand Tracking</title>
+
+<link rel="stylesheet" href="style.css">
 
 <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js"></script>
 
-<style>
-body{
-background:black;
-text-align:center;
-}
-
-canvas{
-max-width:900px;
-}
-
-video{
-display:none;
-}
-</style>
-
 </head>
 
 <body>
 
-<h2 style="color:white">Desenhar no Ar ✋</h2>
+<h1>Desenhar no Ar ✋</h1>
 
+<div class="container">
 <video id="video"></video>
 <canvas id="canvas"></canvas>
+</div>
+
+<div class="info">
+<p>Use o dedo indicador para desenhar</p>
+<p>Feche a mão para parar</p>
+</div>
 
 <script src="script.js"></script>
 
